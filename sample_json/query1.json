@@ -1,0 +1,67 @@
+[
+  {
+    "Plan": {
+      "Node Type": "Aggregate",
+      "Strategy": "Sorted",
+      "Partial Mode": "Finalize",
+      "Parallel Aware": false,
+      "Startup Cost": 262684.16,
+      "Total Cost": 262685.96,
+      "Plan Rows": 6,
+      "Plan Width": 68,
+      "Group Key": ["l_returnflag", "l_linestatus"],
+      "Plans": [
+        {
+          "Node Type": "Gather Merge",
+          "Parent Relationship": "Outer",
+          "Parallel Aware": false,
+          "Startup Cost": 262684.16,
+          "Total Cost": 262685.56,
+          "Plan Rows": 12,
+          "Plan Width": 140,
+          "Workers Planned": 2,
+          "Plans": [
+            {
+              "Node Type": "Sort",
+              "Parent Relationship": "Outer",
+              "Parallel Aware": false,
+              "Startup Cost": 261684.14,
+              "Total Cost": 261684.15,
+              "Plan Rows": 6,
+              "Plan Width": 140,
+              "Sort Key": ["l_returnflag", "l_linestatus"],
+              "Plans": [
+                {
+                  "Node Type": "Aggregate",
+                  "Strategy": "Hashed",
+                  "Partial Mode": "Partial",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Startup Cost": 261684.0,
+                  "Total Cost": 261684.06,
+                  "Plan Rows": 6,
+                  "Plan Width": 140,
+                  "Group Key": ["l_returnflag", "l_linestatus"],
+                  "Plans": [
+                    {
+                      "Node Type": "Seq Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": true,
+                      "Relation Name": "lineitem",
+                      "Alias": "lineitem",
+                      "Startup Cost": 0.0,
+                      "Total Cost": 161751.44,
+                      "Plan Rows": 2498314,
+                      "Plan Width": 36,
+                      "Filter": "(l_shipdate <= '1998-11-24 00:00:00'::timestamp without time zone)"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

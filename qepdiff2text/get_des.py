@@ -1,17 +1,16 @@
 from typing import List
 
-from qepdiff2text.Node import Node
-from qepdiff2text.diff import diff
-from qepdiff2text.Description import Description
+from . import describe
+from .diff import diff
+from .utils import post_order_tree_traversal
 
-
-def get_des(treeBefore: Node, treeAfter: Node) -> List[Description]:
+def get_des(tree_before: Node, tree_after: Node) -> List[Description]:
     """
     Generates the description of difference between the two trees.
 
-    :param treeBefore: The 'before tree'.
-    :param treeAfter: The 'after tree'.
+    :param tree_before: The 'before tree'.
+    :param tree_after: The 'after tree'.
     :return: A list of Descriptions.
     """
-    distance, delta = diff(treeBefore, treeAfter)
+    distance, delta = diff(tree_before, tree_after)
     return []

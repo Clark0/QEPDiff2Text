@@ -9,41 +9,45 @@ class APTEDConfig(Config):
     def children(self, node):
         return node.children
 
-def diff(treeBefore: Node, treeAfter: Node) -> (int, dict):
+def diff(tree_before: Node, tree_after: Node) -> (int, dict):
     """
     Returns the difference between two QEP trees
 
-    :param treeBefore: The 'before tree'.
-    :param treeAfter: The 'after tree'.
+    :param tree_before: The 'before tree'.
+    :param tree_after: The 'after tree'.
     :return:
         distance: The structural edit distance between the two trees.
             Only difference in algorithm is captured.
         delta: The difference between the two trees. Has 3 keys:
-            - deleted: Those nodes that are deleted from treeBefore
-            - inserted: Those nodes that are inserted into treeAfter
-            - stayed: Those nodes that are present in both trees. Each entry
-                has two keys:
+            - deleted: Those nodes that are deleted from tree_before
+            - inserted: Those nodes that are inserted into tree_after
+            - stayed: Those nodes that are present in both trees. Has two
+                keys:
 
-                - before: the node in treeBefore
-                - after : the node in treeAfter
+                - before: the nodes in tree_before
+                - after : the nodes in tree_after
 
                 Note that the before and after may be different in attributes
                 other than algorithm and operation.
     """
-    apted = APTED(treeBefore, treeAfter, APTEDConfig())
+    apted = APTED(tree_before, tree_after, APTEDConfig())
     distance = apted.compute_edit_distance()
     mapping = apted.compute_edit_mapping()
 
     inserted = [m[1] for m in mapping if m[0] is None]
     deleted = [m[0] for m in mapping if m[1] is None]
-    stayed = [
-        {
-            "before": m[0],
-            "after": m[1]
-        }
-        for m in mapping
-        if m[0] is not None and m[1] is not None
-    ]
+    stayed = {
+        "before": [
+            m[0]
+            for m in mapping
+            if m[0] is not None and m[1] is not None
+        ],
+        "after":[
+            m[1]
+            for m in mapping
+            if m[0] is not None and m[1] is not None
+        ]
+    }
 
     delta = {
         "deleted": deleted,

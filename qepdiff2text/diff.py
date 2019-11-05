@@ -34,25 +34,21 @@ def diff(tree_before: Node, tree_after: Node) -> (int, dict):
     distance = apted.compute_edit_distance()
     mapping = apted.compute_edit_mapping()
 
-    inserted = [m[1] for m in mapping if m[0] is None]
-    deleted = [m[0] for m in mapping if m[1] is None]
-    stayed = {
-        "before": [
-            m[0]
-            for m in mapping
-            if m[0] is not None and m[1] is not None
-        ],
-        "after":[
-            m[1]
-            for m in mapping
-            if m[0] is not None and m[1] is not None
-        ]
-    }
-
     delta = {
-        "deleted": deleted,
-        "inserted": inserted,
-        "stayed": stayed,
+        "deleted": [m[0] for m in mapping if m[1] is None],
+        "inserted": [m[1] for m in mapping if m[0] is None],
+        "stayed": {
+            "before": [
+                m[0]
+                for m in mapping
+                if m[0] is not None and m[1] is not None
+            ],
+            "after":[
+                m[1]
+                for m in mapping
+                if m[0] is not None and m[1] is not None
+            ]
+        }
     }
     return distance, delta
 

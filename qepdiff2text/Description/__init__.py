@@ -4,5 +4,6 @@ from .DescriptionWithAfter import DescriptionWithAfter
 from .DescriptionWithDiff import DescriptionWithDiff
 from .DeletionDescription import DeletionDescription
 from .InsertionDescription import InsertionDescription
+from .StayedDescription import StayedDescription
 from .SameDescription import SameDescription
 from .UpdateDescription import UpdateDescription

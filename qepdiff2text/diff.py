@@ -10,9 +10,12 @@ class APTEDConfig(Config):
         return node.children
 
 def diff(treeBefore: Node, treeAfter: Node) -> (int, dict):
-    '''
+    """
     Returns the difference between two QEP trees
-    Returns:
+
+    :param treeBefore: The 'before tree'.
+    :param treeAfter: The 'after tree'.
+    :return:
         distance: The structural edit distance between the two trees.
             Only difference in algorithm is captured.
         delta: The difference between the two trees. Has 3 keys:
@@ -26,7 +29,7 @@ def diff(treeBefore: Node, treeAfter: Node) -> (int, dict):
 
                 Note that the before and after may be different in attributes
                 other than algorithm and operation.
-    '''
+    """
     apted = APTED(treeBefore, treeAfter, APTEDConfig())
     distance = apted.compute_edit_distance()
     mapping = apted.compute_edit_mapping()

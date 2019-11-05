@@ -1,3 +1,5 @@
+import psycopg2
+
 class QEPFetcher:
     def __init__(self, host, dbname, user, password):
         self.conn = psycopg2.connect(host=host, dbname=dbname, user=user, password=password)

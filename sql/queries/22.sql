@@ -1,9 +1,3 @@
--- $ID$
--- TPC-H/TPC-R Global Sales Opportunity Query (Q22)
--- Functional Query Definition
--- Approved February 1998
-:x
-:o
 select
 	cntrycode,
 	count(*) as numcust,
@@ -17,7 +11,7 @@ from
 			customer
 		where
 			substring(c_phone from 1 for 2) in
-				(':1', ':2', ':3', ':4', ':5', ':6', ':7')
+				('11', '18', '15', '20', '12', '29', '30')
 			and c_acctbal > (
 				select
 					avg(c_acctbal)
@@ -26,7 +20,7 @@ from
 				where
 					c_acctbal > 0.00
 					and substring(c_phone from 1 for 2) in
-						(':1', ':2', ':3', ':4', ':5', ':6', ':7')
+						('11', '18', '15', '20', '12', '29', '30')
 			)
 			and not exists (
 				select
@@ -40,5 +34,5 @@ from
 group by
 	cntrycode
 order by
-	cntrycode;
-:n -1
+	cntrycode
+limit 1;

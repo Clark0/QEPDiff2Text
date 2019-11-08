@@ -27,7 +27,7 @@ class Node(object):
                         attrs[NodeAttrs.INDEX_NAME]
                     )
             elif self.algorithm == Algos.SUBQUERY_SCAN:
-                self.set_output_name(attrs[ALIAS])
+                self.set_output_name(attrs[NodeAttrs.ALIAS])
             else:
                 self.set_output_name(attrs[NodeAttrs.RELATION_NAME])
 

@@ -41,7 +41,7 @@ def get_des_gen(tree_before: Node, tree_after: Node) -> Iterator[Description]:
 
     while cur_node_before or cur_node_after:
         while cur_node_after in delta['inserted']:
-            yield describe.describe_deletion(cur_node_after)
+            yield describe.describe_insertion(cur_node_after)
             cur_node_after = next(tree_after_iter)
         while cur_node_before in delta['deleted']:
             yield describe.describe_deletion(cur_node_before)

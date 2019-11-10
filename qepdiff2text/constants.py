@@ -14,26 +14,26 @@ class _const():
 
 
 class NodeAttrs(_const):
-    NODE_TYPE = 'Node Type'
-    PLAN = 'Plan'
-    PLANS = 'Plans'
-    RELATION_NAME = 'Relation Name'
-    SCHEMA = 'Schema'
-    ALIAS = 'Alias'
-    GROUP_KEY = 'Group Key'
-    SORT_KEY = 'Sort Key'
-    JOIN_TYPE = 'Join Type'
-    INDEX_NAME = 'Index Name'
-    HASH_COND = 'Hash Cond'
-    FILTER = 'Filter'
-    INDEX_COND = 'Index Cond'
-    MERGE_COND = 'Merge Cond'
-    RECHECK_COND = 'Recheck Cond'
-    JOIN_FILTER = 'Join Filter'
-    ACTUAL_ROWS = 'Actual Rows'
-    ACTUAL_TOTAL_TIME = 'Actual Total Time'
-    SUBPLAN_NAME = 'Subplan Name'
-    RETURNS = 'returns'
+    NODE_TYPE = 'Node Type' #x
+    PLAN = 'Plan' #x
+    PLANS = 'Plans' #x
+    RELATION_NAME = 'Relation Name' #
+    SCHEMA = 'Schema' #x
+    ALIAS = 'Alias' #x
+    GROUP_KEY = 'Group Key' #
+    SORT_KEY = 'Sort Key' #
+    JOIN_TYPE = 'Join Type' #
+    INDEX_NAME = 'Index Name' #
+    HASH_COND = 'Hash Cond' #
+    FILTER = 'Filter' #
+    INDEX_COND = 'Index Cond' #
+    MERGE_COND = 'Merge Cond' #
+    RECHECK_COND = 'Recheck Cond' #
+    JOIN_FILTER = 'Join Filter' #
+    ACTUAL_ROWS = 'Actual Rows' #x
+    ACTUAL_TOTAL_TIME = 'Actual Total Time' #x
+    SUBPLAN_NAME = 'Subplan Name' #x
+    RETURNS = 'returns' #x
 
 
 class Algos(_const):

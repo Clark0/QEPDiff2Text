@@ -5,8 +5,13 @@ from qepdiff2text.Node import Node
 def test_unique():
     with open('tests/test.json') as f:
         attr = json.loads(f.read())[0]['Plan']
+
+    Node.init_node()    # initialize global variable
     node = Node(attr)
-    print_text(node)
+    node.to_text()
+    for step in Node.steps:
+        print(step)
+    # print_text(node)
 
 
 def print_text(node, indent=0):

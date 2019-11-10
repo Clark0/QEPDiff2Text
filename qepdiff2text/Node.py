@@ -14,11 +14,19 @@ def findOperation(algo):
     return None
 
 
-cur_table_name = 0
-cur_step = 0
+# TODO: global variable should be initialized in front end
+# cur_table_name = 1
+# cur_step = 1
+# table_subquery_name_pair = {}
+# steps = []
 
 
 class Node(object):
+    cur_table_name = 1
+    cur_step = 1
+    table_subquery_name_pair = {}
+    steps = []
+
     def __init__(self, attrs):
         assert isinstance(attrs, dict)
         # assert NodeAttrs.NODE_TYPE in attrs
@@ -27,6 +35,7 @@ class Node(object):
         self.attributes = {k: v for k,
                            v in attrs.items() if k in NodeAttrs.all()}
         self.text = None
+        self.step = None
 
         if self.is_scan():
             if self.algorithm == Algos.INDEX_SCAN:
@@ -48,6 +57,13 @@ class Node(object):
         else:
             self.children = []
 
+    @staticmethod
+    def init_node():
+        Node.cur_table_name = 1
+        Node.cur_step = 1
+        Node.table_subquery_name_pair = {}
+        Node.steps = []
+
     def set_output_name(self, output_name):
         if "T" == output_name[0] and output_name[1:].isdigit():
             self.output_name = int(output_name[1:])
@@ -59,9 +75,6 @@ class Node(object):
             return "T" + str(self.output_name)
         else:
             return self.output_name
-
-    def set_step(self, step):
-        self.step = step
 
     def is_scan(self):
         return self.operation == Operations.SCAN
@@ -76,7 +89,6 @@ class Node(object):
         return "\n".join([first_line] + children_lines)
 
     def to_text(self, skip=False) -> str:
-        global cur_step, cur_table_name
         if self.text is not None:
             return self.text
 
@@ -115,7 +127,7 @@ class Node(object):
                         text += " and table " + child.get_output_name()
 
                 text = "hash table " + hashed_table + text + \
-                    " under condition " + parse_cond(NodeAttrs.HASH_COND, self.attributes[NodeAttrs.HASH_COND])
+                    " under condition " + parse_cond(NodeAttrs.HASH_COND, self.attributes[NodeAttrs.HASH_COND], Node.table_subquery_name_pair)
 
             elif self.algorithm == Algos.MERGE_JOIN:
                 text = "perform " + self.algorithm + " on "
@@ -144,7 +156,7 @@ class Node(object):
             # combine bitmap heap scan and bitmap index scan
             if self.children[0].algorithm == Algos.BITMAP_INDEX_SCAN and NodeAttrs.RELATION_NAME in self.attributes:
                 self.children[0].set_output_name(self.attributes[NodeAttrs.RELATION_NAME])
-                text = " with index condition " + parse_cond("Recheck Cond", self.attributes[NodeAttrs.RELATION_NAME])
+                text = " with index condition " + parse_cond("Recheck Cond", self.attributes[NodeAttrs.RELATION_NAME], Node.table_subquery_name_pair)
 
             text = "perform bitmap heap scan on table " + self.children[0].get_output_name() + text
 
@@ -154,7 +166,7 @@ class Node(object):
                 self.children[0].set_output_name(self.children[0].children[0].get_output_name())
                 text = "sort " + self.children[0].get_output_name()
                 if NodeAttrs.SORT_KEY in self.children[0].attributes:
-                    text += " with attribute " + parse_cond("Sort Key", self.children[0].attributes[NodeAttrs.SORT_KEY]) + " and "
+                    text += " with attribute " + parse_cond("Sort Key", self.children[0].attributes[NodeAttrs.SORT_KEY], Node.table_subquery_name_pair) + " and "
                 else:
                     text += " and "
 
@@ -185,7 +197,8 @@ class Node(object):
                 text += " and table " + self.children[1].get_output_name()
 
         elif self.operation == Operations.SORT:
-            text += "perform sort on table " + self.children[0].get_output_name() + " with attribute " + parse_cond(NodeAttrs.SORT_KEY, self.attributes[NodeAttrs.SORT_KEY])
+            text += "perform sort on table " + self.children[0].get_output_name() + " with attribute " + parse_cond(NodeAttrs.SORT_KEY,
+                                                                                                                    self.attributes[NodeAttrs.SORT_KEY], Node.table_subquery_name_pair)
 
         elif self.operation == Operations.LIMIT:
             text = "limit the result from table " + self.children[0].get_output_name() + " to " + str(self.attrs["Plan Rows"]) + " record(s)"
@@ -204,30 +217,31 @@ class Node(object):
                 text += " table " + self.children[0].get_output_name()
 
         if NodeAttrs.GROUP_KEY in self.attributes:
-            text += " with grouping on attribute " + parse_cond("Group Key", self.attributes[NodeAttrs.GROUP_KEY])
+            text += " with grouping on attribute " + parse_cond("Group Key", self.attributes[NodeAttrs.GROUP_KEY], Node.table_subquery_name_pair)
 
         if NodeAttrs.FILTER in self.attributes:
-            text += " and filtering on " + parse_cond("Table Filter", self.attributes[NodeAttrs.FILTER])
+            text += " and filtering on " + parse_cond("Table Filter", self.attributes[NodeAttrs.FILTER], Node.table_subquery_name_pair)
 
         if 'Join Filter' in self.attributes:
-            text += " while filtering on " + parse_cond("Join Filter", self.attributes['Join Filter'])
+            text += " while filtering on " + parse_cond("Join Filter", self.attributes['Join Filter'], Node.table_subquery_name_pair)
 
         # set intermediate table name
         if increment:
-            self.set_output_name("T" + str(cur_table_name))
-            # step += " to get intermediate table " + node.get_output_name()
-            cur_table_name += 1
-        # if self.attributes[NodeAttrs.SUBPLAN_NAME]:
-        #     table_subquery_name_pair[node.subplan_name] = node.get_output_name()
+            self.set_output_name("T" + str(Node.cur_table_name))
+            text += " to get intermediate table " + self.get_output_name()
+            Node.cur_table_name += 1
+        if NodeAttrs.SUBPLAN_NAME in self.attributes:
+            Node.table_subquery_name_pair[self.attributes[NodeAttrs.SUBPLAN_NAME]] = self.get_output_name()
 
-        self.set_step(cur_step)
-        cur_step += 1
-        self.text = text
+        self.step = Node.cur_step
+        Node.cur_step += 1
+        self.text = "Step {}: {}".format(self.step, text)
+        Node.steps.append(self.text)
 
-        return text
+        return self.text
 
 
-def parse_single_string(cond):
+def parse_single_string(cond, table_subquery_name_pair):
     logger = logging.getLogger("neuron.util.parse_single_string")
     logger.debug(cond)
     # remove parentheses
@@ -269,23 +283,23 @@ def parse_single_string(cond):
         parsed_cond = parsed_cond.replace(regexp.group(0), replacement)
 
     # replace subquery name with table name
-    # for key in table_subquery_name_pair:
-    #     while key in parsed_cond:
-    #         parsed_cond = parsed_cond.replace(key, table_subquery_name_pair[key])
+    for key in table_subquery_name_pair:
+        while key in parsed_cond:
+            parsed_cond = parsed_cond.replace(key, table_subquery_name_pair[key])
 
     return parsed_cond
 
 
-def parse_cond(cond_name, cond):
+def parse_cond(cond_name, cond, table_subquery_name_pair):
     # handle single string
     if cond_name in ["Hash Cond", "Join Filter", "Table Filter", "Recheck Cond"]:
-        parsed_cond = parse_single_string(cond)
+        parsed_cond = parse_single_string(cond, table_subquery_name_pair)
 
     # handle list
     elif cond_name in ["Sort Key", "Group Key"]:
         parsed_cond = []
         for c in cond:
-            parsed_cond.append(parse_single_string(c))
+            parsed_cond.append(parse_single_string(c, table_subquery_name_pair))
 
         parsed_cond = ", ".join(parsed_cond)
 

@@ -27,7 +27,7 @@ class Node(object):
     table_subquery_name_pair = {}
     steps = []
 
-    def __init__(self, attrs):
+    def __init__(self, attrs, is_root=True):
         assert isinstance(attrs, dict)
         # assert NodeAttrs.NODE_TYPE in attrs
         self.algorithm = attrs[NodeAttrs.NODE_TYPE]
@@ -51,11 +51,14 @@ class Node(object):
                 self.set_output_name(attrs[NodeAttrs.RELATION_NAME])
 
         if NodeAttrs.PLANS in attrs:
-            self.children = [Node(child_attrs)
+            self.children = [Node(child_attrs, is_root=False)
                              for child_attrs in attrs[NodeAttrs.PLANS]]
             self.attributes.pop(NodeAttrs.PLANS)
         else:
             self.children = []
+        if is_root:
+            Node.init_node()
+            self.to_text()
 
     @staticmethod
     def init_node():

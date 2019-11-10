@@ -20,7 +20,7 @@ def describe_insertion(node: Node) -> InsertionDescription:
     :param node: The node inserted
     :return: InsertionDescription object describing an insertion
     """
-    diff = "This node is new in query 2."
+    diff = "This step is new in query 2."
     return InsertionDescription("The string inserted", diff)
 
 def describe_deletion(node: Node) -> DeletionDescription:
@@ -29,7 +29,7 @@ def describe_deletion(node: Node) -> DeletionDescription:
     :param node: The node deleted
     :return: DeletionDescription object describing an deletion
     """
-    diff = "This node no longer exists in query 2."
+    diff = "This step is removed in query 2."
     return DeletionDescription("The string deleted", diff)
 
 def describe_stayed(node_before: Node, node_after: Node) -> StayedDescription:
@@ -86,14 +86,14 @@ def describe_update(node_before: Node, node_after: Node) -> UpdateDescription:
 
     if node_before.algorithm != node_after.algorithm:
         if node_before.operation != node_after.operation:
-            diff = "The first query performs " + node_before.algorithm.lower() + \
+            diff = "This step in the first query performs " + node_before.algorithm.lower() + \
                    ", but the second one performs " + node_after.algorithm.lower() + "."
         else:
-            diff = "Both query perform " + node_before.operation.lower() + \
-                   ". However the first query performs "+ node_before.algorithm.lower() + \
-                   ', and the second query performs ' + node_after.algorithm.lower() + "."
+            diff = "This step in both query perform " + node_before.operation.lower() + \
+                   ". However in the first query "+ node_before.algorithm.lower() + " is performed" + \
+                   ', and in the second query ' + node_after.algorithm.lower() + " is performed" + "."
     else:
-        diff = "Both query perform " + node_before.algorithm.lower() + ", but "
+        diff = "This step in both query perform " + node_before.algorithm.lower() + ", but "
         # collect differences
         differences = []
         if not _is_output_name_same(node_before, node_after):

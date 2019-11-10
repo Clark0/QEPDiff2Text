@@ -20,8 +20,9 @@ def describe_insertion(node: Node) -> InsertionDescription:
     :param node: The node inserted
     :return: InsertionDescription object describing an insertion
     """
-    diff = "This step is new in query 2."
-    return InsertionDescription("The string inserted", diff)
+    after_des = node.to_text()
+    diff_des = "This step is new in query 2."
+    return InsertionDescription(after_des, diff_des)
 
 def describe_deletion(node: Node) -> DeletionDescription:
     """
@@ -29,8 +30,9 @@ def describe_deletion(node: Node) -> DeletionDescription:
     :param node: The node deleted
     :return: DeletionDescription object describing an deletion
     """
+    before_des = node.to_text()
     diff = "This step is removed in query 2."
-    return DeletionDescription("The string deleted", diff)
+    return DeletionDescription(before_des, diff)
 
 def describe_stayed(node_before: Node, node_after: Node) -> StayedDescription:
     """
@@ -73,7 +75,9 @@ def describe_same(node_before: Node, node_after: Node) -> SameDescription:
     """
 
     # Do nothing
-    return SameDescription("Same String1", "Same String2")
+    before_des = node_before.to_text()
+    after_des = node_after.to_text()
+    return SameDescription(before_des, after_des)
 
 def describe_update(node_before: Node, node_after: Node) -> UpdateDescription:
     """
@@ -83,6 +87,9 @@ def describe_update(node_before: Node, node_after: Node) -> UpdateDescription:
     :param node_after: The node in tree_after
     :return: StayedDescription object describing an stayed node
     """
+
+    before_des = node_before.to_text()
+    after_des = node_after.to_text()
 
     if node_before.algorithm != node_after.algorithm:
         if node_before.operation != node_after.operation:
@@ -109,7 +116,7 @@ def describe_update(node_before: Node, node_after: Node) -> UpdateDescription:
             diff += ", ".join(differences[:-1])
             diff += " and " + differences[-1] + " are different."
 
-    return UpdateDescription("Before String", "After String", diff)
+    return UpdateDescription(before_des, after_des, diff)
 
 def _is_output_name_same(node_before: Node, node_after: Node) -> bool:
     # Outname doesn't start with "T" are ALIAS given by User. If 2 ALIAS are different,

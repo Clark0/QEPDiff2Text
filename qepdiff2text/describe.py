@@ -55,7 +55,10 @@ def describe_stayed(node_before: Node, node_after: Node) -> StayedDescription:
             return False
         else:
             for attr in interested_attrs:
-                if _exists_attr(attr, node_before, node_after) and \
+                if _exists_attr(attr, node_before, node_after) == 1 or \
+                    _exists_attr(attr, node_before, node_after) == 2:
+                    return False
+                elif _exists_attr(attr, node_before, node_after) == 12 and \
                     node_before.attributes[attr] != node_after.attributes[attr]:
                     return False
         return True
@@ -101,20 +104,59 @@ def describe_update(node_before: Node, node_after: Node) -> UpdateDescription:
                    ', and in the second query ' + node_after.algorithm.lower() + " is performed" + "."
     else:
         diff = "This step in both query perform " + node_before.algorithm.lower() + ", but "
-        # collect differences
-        differences = []
+        differences = [] # differences between node1 and node2
+        node1_special = [] # something node1 has but node2 doesn't have
+        node2_special = [] # something node2 has but node1 doesn't have
         if not _is_output_name_same(node_before, node_after):
             differences.append("output name")
         for attr in interested_attrs:
-            if _exists_attr(attr, node_before, node_after) and \
+            if _exists_attr(attr, node_before, node_after) == 1:
+                differences.append(attr)
+                node1_special.append(attr)
+            elif _exists_attr(attr, node_before, node_after) == 2:
+                differences.append(attr)
+                node2_special.append(attr)
+            elif _exists_attr(attr, node_before, node_after) == 12 and \
                 node_before.attributes[attr] != node_after.attributes[attr]:
                 differences.append(attr)
         differences = [d.lower() for d in differences]
         if len(differences) == 1:
-            diff += differences[0] + " is different."
+            diff += differences[0] + " is different. "
         else:
             diff += ", ".join(differences[:-1])
-            diff += " and " + differences[-1] + " are different."
+            diff += " and " + differences[-1] + " are different. "
+
+        node1_special_key = [s1.lower() for s1 in node1_special]
+        node1_special_value = [
+            node_before.attributes[s1]
+            for s1 in node1_special
+        ]
+        node2_special_key = [s2.lower() for s2 in node2_special]
+        node2_special_value = [
+            node_after.attributes[s1]
+            for s1 in node2_special
+        ]
+        node1_display = [
+            " ".join([k,v])
+            for k, v in zip(node1_special_key, node1_special_value)
+        ]
+        node2_display = [
+            " ".join([k, v])
+            for k, v in zip(node2_special_key, node2_special_value)
+        ]
+        if len(node1_display) == 1:
+            diff += "Query 1 has " + node1_display[0] + \
+                    ", but query 2 doesn't have " + node1_special_key[0] + ". "
+            if len(node1_display) > 1:
+                diff += "Query 1 has " + ", ".join(node1_display[:-1]) + \
+                        " and " + node1_display[-1] +", but query 2 doesn't have them. "
+
+        if len(node2_display) == 1:
+            diff += "Query 2 has " + node2_display[0] + \
+                    ", but query 1 doesn't have " + node2_special_key[0] + ". "
+            if len(node2_display) > 1:
+                diff += "Query 2 has " + ", ".join(node2_display[:-1]) + \
+                        " and " + node2_display[-1] + ", but query 1 doesn't  have them. "
 
     return UpdateDescription(before_des, after_des, diff)
 
@@ -129,7 +171,16 @@ def _is_output_name_same(node_before: Node, node_after: Node) -> bool:
     else:
         return True # Output name are same
 
-def _exists_attr(attr: str, node_1: Node, node_2: Node) -> bool:
+def _exists_attr(attr: str, node_1: Node, node_2: Node) -> int:
+    # return 12 if attributes in both nodes,
+    # return 1 if attributes in node 1,
+    # return 2 if attributes in node 2,
+    # return 0 if attributes not in node 1 or 2.
     if attr in node_1.attributes and attr in node_2.attributes:
-        return True
-    return False
+        return 12 # attributes exist in both nodes
+    elif attr in node_1.attributes:
+        return 1 # attributes exist in node 1
+    elif attr in node_2.attributes:
+        return 2  # attributes exist in node 2
+    else:
+        return 0 # attributes don't exist on both node

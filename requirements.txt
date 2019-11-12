@@ -38,5 +38,4 @@ traitlets==4.3.3
 vboxapi==1.0
 wcwidth==0.1.7
 zipp==0.6.0
-pyqt==5.9.2
-qt==5.9.7
+PyQt5==5.9.2

@@ -6,10 +6,11 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+import logging
 from PyQt5 import *
 from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 from PyQt5.QtWidgets import QCheckBox, QListWidgetItem, QTableWidgetItem, QDialog, QPushButton, QMessageBox
-
+from qepdiff2text.view.connection import ConnectHelper
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -218,6 +219,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label_6.setText(_translate("MainWindow", "TextLabel"))
         self.connectBtn.setText(_translate("MainWindow", "Connect"))
+        self.connectBtn.clicked.connect(self.onConnectionClick)
         self.historyLabel.setText(_translate("MainWindow", "History"))
         self.clearBtn.setText(_translate("MainWindow", "Clear"))
         self.clearBtn.clicked.connect(self.clear_list)
@@ -244,7 +246,6 @@ class Ui_MainWindow(object):
 
     def insert(self, data_list):
         """
-        :param list: 要插入的选项文字数据列表 list[str] eg：['城市'，'小区','小区ID']
         """
         # for i in data_list:
         i = data_list[-1]
@@ -295,7 +296,19 @@ class Ui_MainWindow(object):
         self.query1_box.setText(chooses[0])
         self.query2_box.setText(chooses[1])
         self.set_table(self.get_diff())
+
+        if self.conn:
+            analyze1 = self.fetch(chooses[0])
+            analyze2 = self.fetch(chooses[1])
+            print(analyze1)
         return chooses
+    
+    def fetch(self, query, args=None):
+        if self.cur:
+            self.cur.execute('explain (format json) ' + query, args)
+            analyze_fetched = self.cur.fetchall()[0][0][0]['Plan']
+            self.conn.rollback()
+            return analyze_fetched
 
     def get_diff(self):
         diff_lst = [["node1","node2","diff1"],["","node2_2","diff2"],["node1_3","node2_3","diff3"]]
@@ -316,6 +329,16 @@ class Ui_MainWindow(object):
             print("button pressed")
         else:
             print("button released")
+    
+    def onConnectionClick(self, s):
+        logger = logging.getLogger('view.connect')
+        dialog = QDialog()
+        dialogHelper = ConnectHelper()
+        dialogHelper.setupUi(dialog)
+        dialog.exec_()
+        self.conn = dialogHelper.conn
+        self.cur = dialogHelper.cur
+
 
 
 if __name__ == "__main__":

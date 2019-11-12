@@ -111,3 +111,4 @@ notebooks/
 .idea/
 
 .vscode/
+*.ui

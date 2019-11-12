@@ -9,8 +9,11 @@
 import logging
 from PyQt5 import *
 from PyQt5 import QtCore, QtGui, QtWidgets, Qt
-from PyQt5.QtWidgets import QCheckBox, QListWidgetItem, QTableWidgetItem, QDialog, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QCheckBox, QListWidgetItem, QTableWidgetItem, QDialog, QPushButton, QMessageBox, QToolTip
 from qepdiff2text.view.connection import ConnectHelper
+from qepdiff2text.get_des import get_des
+from qepdiff2text.Node import Node
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -120,7 +123,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.inputLabel = QtWidgets.QLabel(self.InputSection)
         self.inputLabel.setObjectName("inputLabel")
-        self.horizontalLayout_2.addWidget(self.inputLabel, 0, QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.horizontalLayout_2.addWidget(self.inputLabel, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
 
         self.inputBox = QtWidgets.QTextEdit(self.InputSection)
         self.inputBox.setObjectName("inputBox")
@@ -129,7 +132,7 @@ class Ui_MainWindow(object):
         self.addBtn.setObjectName("addBtn")
         self.addBtn.clicked.connect(self.get_input)
 
-        self.horizontalLayout_2.addWidget(self.addBtn, 0, QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.horizontalLayout_2.addWidget(self.addBtn, 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
         self.verticalLayout_2.addWidget(self.inputBox)
@@ -210,7 +213,6 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -224,10 +226,8 @@ class Ui_MainWindow(object):
         self.clearBtn.setText(_translate("MainWindow", "Clear"))
         self.clearBtn.clicked.connect(self.clear_list)
 
-
         self.loadBtn.setText(_translate("MainWindow", "Load"))
         self.loadBtn.clicked.connect(self.getChoose)
-
 
         self.inputLabel.setText(_translate("MainWindow", "InputBox"))
         self.addBtn.setText(_translate("MainWindow", "Add"))
@@ -242,7 +242,7 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "query2"))
         item = self.tableWidget.horizontalHeaderItem(3)
         item.setText(_translate("MainWindow", "difference"))
-
+        self.qep_fetcher = None
 
     def insert(self, data_list):
         """
@@ -250,21 +250,20 @@ class Ui_MainWindow(object):
         # for i in data_list:
         i = data_list[-1]
         self.query_nb += 1
-        box = QCheckBox('query_' +  str(self.query_nb))  # 实例化一个QCheckBox，吧文字传进去
+        box = QCheckBox('query_' + str(self.query_nb))  # 实例化一个QCheckBox，吧文字传进去
         item = QListWidgetItem()
 
         # query_doc = QListWidgetItem()# 实例化一个Item，QListWidget，不能直接加入QCheckBox
         self.listWidget.addItem(item)  # 把QListWidgetItem加入QListWidget
         # self.listWidget.addItem(query_doc)
         self.listWidget.setItemWidget(item, box)
-        self.listWidget.addItem(i)# 再把QCheckBox加入QListWidgetItem
+        self.listWidget.addItem(i)  # 再把QCheckBox加入QListWidgetItem
 
     def get_input(self, input_list):
         doc = self.inputBox.document().toPlainText()
         self.query_list.append(doc)
         self.insert(self.query_list)
         self.inputBox.clear()
-        print(doc)
 
     def clear_list(self):
         self.listWidget.clear()
@@ -273,72 +272,68 @@ class Ui_MainWindow(object):
     def getChoose(self) -> [str]:
 
         count = self.listWidget.count()  # QListWidget的总个数
-        print(count)
 
         cb_list = [self.listWidget.itemWidget(self.listWidget.item(i))
-                    for i in range(0, count, 2)]  # QListWidget里面所有QListWidgetItem中的QCheckBox
-        print(cb_list)
+                   for i in range(0, count, 2)]  # QListWidget里面所有QListWidgetItem中的QCheckBox
         chooses = []
         for cb in cb_list:  # type:QCheckBox
             if cb.isChecked():
                 j = 2*(int(str(cb.text())[-1]))-1
-                print(j)
                 chooses.append(self.listWidget.item(j).text())
-        print(chooses)
         if len(chooses) != 2:
             msg = QMessageBox()
             msg.setText("Please check exactly two boxes for comparison")
             msg.exec_()
             return
 
-
         # print(chooses)
         self.query1_box.setText(chooses[0])
         self.query2_box.setText(chooses[1])
-        self.set_table(self.get_diff())
 
-        if self.conn:
-            analyze1 = self.fetch(chooses[0])
-            analyze2 = self.fetch(chooses[1])
-            print(analyze1)
+        if self.qep_fetcher:
+            analyze_bef = self.qep_fetcher.fetch_json(chooses[0])
+            analyze_aft = self.qep_fetcher.fetch_json(chooses[1])
+            if analyze_bef and analyze_aft:
+                self.set_table(self.get_diff(analyze_bef, analyze_aft))
+            else:
+                logger = logging.getLogger("view.qepdiff")
+                logger.error('fail to query qep')
         return chooses
-    
-    def fetch(self, query, args=None):
-        if self.cur:
-            self.cur.execute('explain (format json) ' + query, args)
-            analyze_fetched = self.cur.fetchall()[0][0][0]['Plan']
-            self.conn.rollback()
-            return analyze_fetched
 
-    def get_diff(self):
-        diff_lst = [["node1","node2","diff1"],["","node2_2","diff2"],["node1_3","node2_3","diff3"]]
-        print(diff_lst)
-        return diff_lst
+    def get_diff(self, analyze_bef, analyze_aft):
+        node_bef, node_aft = Node(analyze_bef), Node(analyze_aft)
+        return get_des(node_bef, node_aft)
 
     def set_table(self, lst):
         rows = len(lst)
         self.tableWidget.setRowCount(rows)
         for i in range(rows):
             self.tableWidget.setItem(i, 0, QTableWidgetItem(i+1))
-            self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i][0]))
-            self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i][1]))
-            self.tableWidget.setItem(i, 3, QTableWidgetItem(lst[i][2]))
+            self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i].get_before_des()))
+            self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i].get_after_des()))
+            self.tableWidget.setItem(i, 3, QTableWidgetItem(lst[i].get_diff_des()))
 
     def btnstate(self):
         if self.addBtn.isChecked():
             print("button pressed")
         else:
             print("button released")
-    
+
     def onConnectionClick(self, s):
         logger = logging.getLogger('view.connect')
         dialog = QDialog()
         dialogHelper = ConnectHelper()
         dialogHelper.setupUi(dialog)
         dialog.exec_()
-        self.conn = dialogHelper.conn
-        self.cur = dialogHelper.cur
+        self.qep_fetcher = dialogHelper.qep_fetcher
+        QToolTip.setFont(QtGui.QFont('SansSerif', 20))
 
+        if self.qep_fetcher is not None:
+            logger.info('db connected')
+            QToolTip.showText(QtCore.QPoint(500, 200), "Connect Successfully")
+        else:
+            logger.info('connection fail')
+            QToolTip.showText(QtCore.QPoint(500, 200), "Connect Failed")
 
 
 if __name__ == "__main__":
@@ -349,4 +344,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-

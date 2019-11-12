@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from qepdiff2text.QEPFetcher import QEPFetcher
 import psycopg2
 
 
@@ -58,8 +59,7 @@ class ConnectHelper(object):
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-        self.conn = None
-        self.cur = None
+        self.qep_fetcher = None
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -83,9 +83,7 @@ class ConnectHelper(object):
         password = self.password_line.text()
 
         try:
-            self.conn = psycopg2.connect(host=host, dbname=database, user=user, password=password)
-            self.cur = self.conn.cursor()
-            print('connected')
+            self.qep_fetcher = QEPFetcher(host=host, dbname=database, user=user, password=password)
         except psycopg2.Error as e:
             print(e)
 

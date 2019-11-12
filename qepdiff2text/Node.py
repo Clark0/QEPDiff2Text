@@ -1,6 +1,7 @@
 from qepdiff2text.constants import NodeAttrs, Algos, Operations, OP_ALGS
 from qepdiff2text.parser import parse_cond
 
+
 def isOperation(algo, operation):
     return algo in OP_ALGS[operation]
 
@@ -10,6 +11,7 @@ def findOperation(algo):
         if isOperation(algo, operation):
             return operation
     return None
+
 
 class Node(object):
     cur_table_name = 1
@@ -102,25 +104,20 @@ class Node(object):
             else:
                 child.to_text(children_skip)
 
-        if self.algorithm in [Algos.HASH] or skip:
-            return "perform hash"
+        if skip:
+            return
 
         text = ""
         if self.operation == Operations.JOIN:
             if self.algorithm == Algos.HASH_JOIN:
-                text = " and perform " + self.algorithm + " on "
+                text = "perform " + self.algorithm + " on "
                 for i, child in enumerate(self.children):
-                    if child.algorithm == Algos.HASH:
-                        child.set_output_name(
-                            child.children[0].get_output_name())
-                        hashed_table = child.get_output_name()
                     if i < len(self.children) - 1:
                         text += "table " + child.get_output_name()
                     else:
                         text += " and table " + child.get_output_name()
 
-                text = "hash table " + hashed_table + text + \
-                    " under condition " + parse_cond(NodeAttrs.HASH_COND, self.attributes[NodeAttrs.HASH_COND], Node.table_subquery_name_pair)
+                text += " under condition " + parse_cond(NodeAttrs.HASH_COND, self.attributes[NodeAttrs.HASH_COND], Node.table_subquery_name_pair)
 
             elif self.algorithm == Algos.MERGE_JOIN:
                 text = "perform " + self.algorithm + " on "
@@ -172,6 +169,8 @@ class Node(object):
                 text += "perform " + self.algorithm + " on table "
 
             text += self.get_output_name()
+            if NodeAttrs.INDEX_COND in self.attributes:
+                text += " under condition " + parse_cond(NodeAttrs.INDEX_COND, self.attributes[NodeAttrs.INDEX_COND], Node.table_subquery_name_pair)
 
         elif self.operation == Operations.AGG:
             for child in self.children:
@@ -232,6 +231,3 @@ class Node(object):
         Node.steps.append(self.text)
 
         return self.text
-
-
-

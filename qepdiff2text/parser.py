@@ -53,7 +53,7 @@ def parse_single_string(cond, table_subquery_name_pair):
 
 def parse_cond(cond_name, cond, table_subquery_name_pair):
     # handle single string
-    if cond_name in ["Hash Cond", "Join Filter", "Table Filter", "Recheck Cond"]:
+    if cond_name in ["Hash Cond", "Join Filter", "Table Filter", "Recheck Cond", "Index Cond", "Merge Cond"]:
         parsed_cond = parse_single_string(cond, table_subquery_name_pair)
 
     # handle list

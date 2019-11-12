@@ -3,7 +3,7 @@ from qepdiff2text.Node import Node
 
 
 def test_unique():
-    with open('tests/test.json') as f:
+    with open('tests/test2.json') as f:
         attr = json.loads(f.read())[0]['Plan']
 
     Node.init_node()    # initialize global variable

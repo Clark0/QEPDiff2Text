@@ -14,26 +14,27 @@ class _const():
 
 
 class NodeAttrs(_const):
-    NODE_TYPE = 'Node Type' #x
-    PLAN = 'Plan' #x
-    PLANS = 'Plans' #x
-    RELATION_NAME = 'Relation Name' #
-    SCHEMA = 'Schema' #x
-    ALIAS = 'Alias' #x
-    GROUP_KEY = 'Group Key' #
-    SORT_KEY = 'Sort Key' #
-    JOIN_TYPE = 'Join Type' #
-    INDEX_NAME = 'Index Name' #
-    HASH_COND = 'Hash Cond' #
-    FILTER = 'Filter' #
-    INDEX_COND = 'Index Cond' #
-    MERGE_COND = 'Merge Cond' #
-    RECHECK_COND = 'Recheck Cond' #
-    JOIN_FILTER = 'Join Filter' #
-    ACTUAL_ROWS = 'Actual Rows' #x
-    ACTUAL_TOTAL_TIME = 'Actual Total Time' #x
-    SUBPLAN_NAME = 'Subplan Name' #x
-    RETURNS = 'returns' #x
+    NODE_TYPE = 'Node Type'  # x
+    PLAN = 'Plan'  # x
+    PLANS = 'Plans'  # x
+    RELATION_NAME = 'Relation Name'
+    SCHEMA = 'Schema'  # x
+    ALIAS = 'Alias'  # x
+    GROUP_KEY = 'Group Key'
+    SORT_KEY = 'Sort Key'
+    JOIN_TYPE = 'Join Type'
+    INDEX_NAME = 'Index Name'
+    HASH_COND = 'Hash Cond'
+    FILTER = 'Filter'
+    INDEX_COND = 'Index Cond'
+    MERGE_COND = 'Merge Cond'
+    RECHECK_COND = 'Recheck Cond'
+    JOIN_FILTER = 'Join Filter'
+    ACTUAL_ROWS = 'Actual Rows'  # x
+    ACTUAL_TOTAL_TIME = 'Actual Total Time'  # x
+    SUBPLAN_NAME = 'Subplan Name'  # x
+    RETURNS = 'returns'  # x
+    PLAN_ROWS = 'Plan Rows'
 
 
 class Algos(_const):
@@ -80,6 +81,7 @@ class Algos(_const):
     LIMIT = "Limit"
     HASH = "Hash"
 
+
 class Operations(_const):
     PROJECT_SET = "PROJECT_SET"
     APPEND = "APPEND"
@@ -98,6 +100,7 @@ class Operations(_const):
     LOCK_ROWS = "LOCK_ROWS"
     LIMIT = "LIMIT"
     HASH = "HASH"
+
 
 ####################################
 # Operation: Algorithms mapping
@@ -142,4 +145,3 @@ OP_ALGS = {
     Operations.LIMIT: [Algos.LIMIT],
     Operations.HASH: [Algos.HASH]
 }
-

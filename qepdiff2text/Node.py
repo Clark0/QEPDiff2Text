@@ -90,7 +90,7 @@ class Node(object):
         increment = True
         # skip the child if merge it with current node
         if self.algorithm in [Algos.UNIQUE, Algos.AGG] and len(self.children) == 1 \
-                and (Operations.SCAN in self.children[0].operation or self.children[0].algorithm == Algos.SORT):
+                and (self.children[0].operation == Operations.SCAN or self.children[0].algorithm == Algos.SORT):
             children_skip = True
         elif self.algorithm == Algos.BITMAP_HEAP_SCAN and self.children[0].algorithm == Algos.BITMAP_INDEX_SCAN:
             children_skip = True
@@ -193,7 +193,7 @@ class Node(object):
                                                                                                                     self.attributes[NodeAttrs.SORT_KEY], Node.table_subquery_name_pair)
 
         elif self.operation == Operations.LIMIT:
-            text = "limit the result from table " + self.children[0].get_output_name() + " to " + str(self.attrs["Plan Rows"]) + " record(s)"
+            text = "limit the result from table " + self.children[0].get_output_name() + " to " + str(self.attributes[NodeAttrs.PLAN_ROWS]) + " record(s)"
 
         else:
             text = "perform " + self.algorithm + " on"

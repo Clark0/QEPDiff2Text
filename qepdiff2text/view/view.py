@@ -282,7 +282,7 @@ class Ui_MainWindow(object):
                 chooses.append(self.listWidget.item(j).text())
         if len(chooses) != 2:
             msg = QMessageBox()
-            msg.setText("Please check exactly two boxes for comparison")
+            msg.setText("Please check exactly two queries for comparison")
             msg.exec_()
             return
 

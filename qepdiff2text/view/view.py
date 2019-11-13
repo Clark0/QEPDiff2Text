@@ -243,7 +243,6 @@ class Ui_MainWindow(object):
         self.query_nb += 1
         box = QCheckBox('query_' + str(self.query_nb))  # 实例化一个QCheckBox，吧文字传进去
         item = QListWidgetItem()
-
         # query_doc = QListWidgetItem()# 实例化一个Item，QListWidget，不能直接加入QCheckBox
         self.listWidget.addItem(item)  # 把QListWidgetItem加入QListWidget
         # self.listWidget.addItem(query_doc)
@@ -340,7 +339,6 @@ class Ui_MainWindow(object):
             logger.info('connection fail')
             QToolTip.showText(QtCore.QPoint(500, 200), "Connection Failed, please try again.")
             self.label_6.setText("Connection Failed")
-
 
 if __name__ == "__main__":
     import sys

@@ -306,7 +306,6 @@ class Ui_MainWindow(object):
             self.tableWidget.setItem(i, 0, QTableWidgetItem(lst[i].get_before_des()))
             self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i].get_after_des()))
             self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i].get_diff_des()))
-            print(lst)
             if lst[i][2] == 'insert':
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(255, 0, 0, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(255, 0, 0, 127))
@@ -321,7 +320,6 @@ class Ui_MainWindow(object):
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(0, 255, 0, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 255, 0, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 255, 0, 127))
-
 
     def onConnectionClick(self, s):
         logger = logging.getLogger('view.connect')

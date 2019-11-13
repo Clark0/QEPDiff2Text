@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 import logging
+from pprint import pprint
 from PyQt5 import *
 from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 from PyQt5.QtWidgets import QCheckBox, QListWidgetItem, QTableWidgetItem, QDialog, QPushButton, QMessageBox, QToolTip
@@ -264,7 +265,6 @@ class Ui_MainWindow(object):
 
     def getChoose(self) -> [str]:
 
-
         count = self.listWidget.count()  # QListWidget的总个数
 
         cb_list = [self.listWidget.itemWidget(self.listWidget.item(i))
@@ -319,7 +319,6 @@ class Ui_MainWindow(object):
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(244, 204, 204, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(244, 204, 204, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(244, 204, 204, 127))
-
 
             if isinstance(lst[i], InsertionDescription):
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(217, 234, 211, 127))

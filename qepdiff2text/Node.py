@@ -142,6 +142,19 @@ class Node(object):
                                           child.get_output_name())
                     text = sort_step + " and " + text
 
+            elif self.algorithm == Algos.NEST_LOOP:
+                text = "perform " + self.algorithm + " on "
+                for i, child in enumerate(self.children):
+                    if i < len(self.children) - 1:
+                        text += "table " + child.get_output_name()
+                    else:
+                        text += " and table " + child.get_output_name()
+                    if NodeAttrs.PARENT_RELATIONSHIP in child.attributes:
+                        if child.attributes[NodeAttrs.PARENT_RELATIONSHIP] == 'Inner':
+                            text += '(as inner loop)'
+                        elif child.attributes[NodeAttrs.PARENT_RELATIONSHIP] == 'Outer':
+                            text += '(as outer loop)'
+
         elif self.algorithm == Algos.BITMAP_HEAP_SCAN:
             # combine bitmap heap scan and bitmap index scan
             if self.children[0].algorithm == Algos.BITMAP_INDEX_SCAN and NodeAttrs.RELATION_NAME in self.attributes:

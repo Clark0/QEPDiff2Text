@@ -35,6 +35,7 @@ class NodeAttrs(_const):
     SUBPLAN_NAME = 'Subplan Name'  # x
     RETURNS = 'returns'  # x
     PLAN_ROWS = 'Plan Rows'
+    PARENT_RELATIONSHIP = 'Parent Relationship'
 
 
 class Algos(_const):

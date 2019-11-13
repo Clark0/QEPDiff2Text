@@ -317,7 +317,7 @@ class Ui_MainWindow(object):
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 0, 255, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 0, 255, 127))
 
-            if isinstance(lst[i], InsertionDescription):
+            if isinstance(lst[i], UpdateDescription):
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(0, 255, 0, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 255, 0, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 255, 0, 127))

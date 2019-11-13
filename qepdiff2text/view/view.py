@@ -101,6 +101,7 @@ class Ui_MainWindow(object):
         self.listWidget = QtWidgets.QListWidget(self.queryhistoryWidget)
         self.listWidget.setResizeMode(QtWidgets.QListView.Fixed)
         self.listWidget.setObjectName("listWidget")
+
         self.gridLayout.addWidget(self.listWidget, 0, 0, 1, 1)
         self.loadBtn = QtWidgets.QPushButton(self.queryhistoryWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -123,7 +124,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.inputLabel = QtWidgets.QLabel(self.InputSection)
         self.inputLabel.setObjectName("inputLabel")
-        self.horizontalLayout_2.addWidget(self.inputLabel, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        self.horizontalLayout_2.addWidget(self.inputLabel, 0, QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
 
         self.inputBox = QtWidgets.QTextEdit(self.InputSection)
         self.inputBox.setObjectName("inputBox")
@@ -132,7 +133,7 @@ class Ui_MainWindow(object):
         self.addBtn.setObjectName("addBtn")
         self.addBtn.clicked.connect(self.get_input)
 
-        self.horizontalLayout_2.addWidget(self.addBtn, 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
+        self.horizontalLayout_2.addWidget(self.addBtn, 0, QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
         self.verticalLayout_2.addWidget(self.inputBox)
@@ -165,6 +166,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addWidget(self.query2_box)
         self.horizontalLayout_3.addLayout(self.verticalLayout_5)
         self.widget1 = QtWidgets.QWidget(self.splitter_3)
+
+
         self.widget1.setObjectName("widget1")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.widget1)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -172,37 +175,27 @@ class Ui_MainWindow(object):
         self.label = QtWidgets.QLabel(self.widget1)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        self.verticalLayout_7 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.verticalLayout.addLayout(self.verticalLayout_7)
-        self.scrollArea = QtWidgets.QScrollArea(self.widget1)
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setObjectName("scrollArea")
-        self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 873, 77))
-        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.tableWidget = QtWidgets.QTableWidget(self.scrollAreaWidgetContents)
-        self.tableWidget.setGeometry(QtCore.QRect(0, 0, 941, 105))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
-        self.tableWidget.setSizePolicy(sizePolicy)
-        self.tableWidget.setMinimumSize(QtCore.QSize(0, 105))
-        self.tableWidget.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(4)
+
+        self.tableWidget = QtWidgets.QTableWidget(self.widget1)
         self.tableWidget.setRowCount(0)
+        self.tableWidget.setObjectName("tableWidget")
+        self.tableWidget.setColumnCount(3)
+        header = self.tableWidget.horizontalHeader()
+        #
+        header.setSectionResizeMode(0, 1)
+        header.setSectionResizeMode(1, 1)
+        header.setSectionResizeMode(2, 1)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(1, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(3, item)
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.verticalLayout.addWidget(self.scrollArea)
+        self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
+        self.verticalLayout.addWidget(self.tableWidget)
+        self.verticalLayout_6.addWidget(self.splitter_3)
+
+
         self.verticalLayout_6.addWidget(self.splitter_3)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -219,7 +212,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label_6.setText(_translate("MainWindow", "TextLabel"))
+        self.label_6.setText(_translate("MainWindow", "Connceted State"))
         self.connectBtn.setText(_translate("MainWindow", "Connect"))
         self.connectBtn.clicked.connect(self.onConnectionClick)
         self.historyLabel.setText(_translate("MainWindow", "History"))
@@ -235,12 +228,10 @@ class Ui_MainWindow(object):
         self.query2_label.setText(_translate("MainWindow", "Query2"))
         self.label.setText(_translate("MainWindow", "Difference"))
         item = self.tableWidget.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "steps"))
-        item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("MainWindow", "query1"))
-        item = self.tableWidget.horizontalHeaderItem(2)
+        item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("MainWindow", "query2"))
-        item = self.tableWidget.horizontalHeaderItem(3)
+        item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "difference"))
         self.qep_fetcher = None
 
@@ -263,7 +254,6 @@ class Ui_MainWindow(object):
         doc = self.inputBox.document().toPlainText()
         self.query_list.append(doc)
         self.insert(self.query_list)
-        self.inputBox.clear()
 
     def clear_list(self):
         self.listWidget.clear()
@@ -312,6 +302,20 @@ class Ui_MainWindow(object):
             self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i].get_before_des()))
             self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i].get_after_des()))
             self.tableWidget.setItem(i, 3, QTableWidgetItem(lst[i].get_diff_des()))
+            if lst[i][2] == 'insert':
+                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(255, 0, 0, 127))
+                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(255, 0, 0, 127))
+                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(255, 0, 0, 127))
+
+            if lst[i][2] == 'delete':
+                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(0, 0, 255, 127))
+                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 0, 255, 127))
+                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 0, 255, 127))
+
+            if lst[i][2] == 'edited':
+                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(0, 255, 0, 127))
+                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 255, 0, 127))
+                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 255, 0, 127))
 
     def btnstate(self):
         if self.addBtn.isChecked():
@@ -331,9 +335,11 @@ class Ui_MainWindow(object):
         if self.qep_fetcher is not None:
             logger.info('db connected')
             QToolTip.showText(QtCore.QPoint(500, 200), "Connected Successfully!")
+            self.label_6.setText("Connected Successfully")
         else:
             logger.info('connection fail')
             QToolTip.showText(QtCore.QPoint(500, 200), "Connection Failed, please try again.")
+            self.label_6.setText("Connection Failed")
 
 
 if __name__ == "__main__":

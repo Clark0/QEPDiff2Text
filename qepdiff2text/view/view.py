@@ -193,6 +193,9 @@ class Ui_MainWindow(object):
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(2, item)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
+
+
+
         self.verticalLayout.addWidget(self.tableWidget)
         self.verticalLayout_6.addWidget(self.splitter_3)
 
@@ -257,6 +260,7 @@ class Ui_MainWindow(object):
     def clear_list(self):
         self.listWidget.clear()
         self.query_list = []
+        self.query_nb = 0
 
     def getChoose(self) -> [str]:
 
@@ -321,7 +325,7 @@ class Ui_MainWindow(object):
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(217, 234, 211, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(217, 234, 211, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(217, 234, 211, 127))
-
+        self.tableWidget.resizeRowsToContents()
 
     def onConnectionClick(self, s):
         logger = logging.getLogger('view.connect')

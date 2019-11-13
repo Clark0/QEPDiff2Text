@@ -212,7 +212,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label_6.setText(_translate("MainWindow", "Connceted State"))
+        self.label_6.setText(_translate("MainWindow", "❌Not connected"))
         self.connectBtn.setText(_translate("MainWindow", "Connect"))
         self.connectBtn.clicked.connect(self.onConnectionClick)
         self.historyLabel.setText(_translate("MainWindow", "History"))
@@ -241,13 +241,13 @@ class Ui_MainWindow(object):
         # for i in data_list:
         i = data_list[-1]
         self.query_nb += 1
-        box = QCheckBox('query_' + str(self.query_nb))  # 实例化一个QCheckBox，吧文字传进去
+        box = QCheckBox('query_' + str(self.query_nb))
         item = QListWidgetItem()
-        # query_doc = QListWidgetItem()# 实例化一个Item，QListWidget，不能直接加入QCheckBox
-        self.listWidget.addItem(item)  # 把QListWidgetItem加入QListWidget
+
+        self.listWidget.addItem(item)
         # self.listWidget.addItem(query_doc)
         self.listWidget.setItemWidget(item, box)
-        self.listWidget.addItem(i)  # 再把QCheckBox加入QListWidgetItem
+        self.listWidget.addItem(i)
 
     def get_input(self, input_list):
         doc = self.inputBox.document().toPlainText()
@@ -259,6 +259,7 @@ class Ui_MainWindow(object):
         self.query_list = []
 
     def getChoose(self) -> [str]:
+
 
         count = self.listWidget.count()  # QListWidget的总个数
 
@@ -287,6 +288,11 @@ class Ui_MainWindow(object):
             else:
                 logger = logging.getLogger("view.qepdiff")
                 logger.error('fail to query qep')
+        else:
+            msg = QMessageBox()
+            msg.setText("Database is not connected.")
+            msg.exec_()
+            return
         return chooses
 
     def get_diff(self, analyze_bef, analyze_aft):
@@ -297,10 +303,10 @@ class Ui_MainWindow(object):
         rows = len(lst)
         self.tableWidget.setRowCount(rows)
         for i in range(rows):
-            self.tableWidget.setItem(i, 0, QTableWidgetItem(i+1))
-            self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i].get_before_des()))
-            self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i].get_after_des()))
-            self.tableWidget.setItem(i, 3, QTableWidgetItem(lst[i].get_diff_des()))
+            self.tableWidget.setItem(i, 0, QTableWidgetItem(lst[i].get_before_des()))
+            self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i].get_after_des()))
+            self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i].get_diff_des()))
+            print(lst)
             if lst[i][2] == 'insert':
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(255, 0, 0, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(255, 0, 0, 127))
@@ -316,11 +322,6 @@ class Ui_MainWindow(object):
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 255, 0, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 255, 0, 127))
 
-    def btnstate(self):
-        if self.addBtn.isChecked():
-            print("button pressed")
-        else:
-            print("button released")
 
     def onConnectionClick(self, s):
         logger = logging.getLogger('view.connect')
@@ -334,11 +335,11 @@ class Ui_MainWindow(object):
         if self.qep_fetcher is not None:
             logger.info('db connected')
             QToolTip.showText(QtCore.QPoint(500, 200), "Connected Successfully!")
-            self.label_6.setText("Connected Successfully")
+            self.label_6.setText("✅ Connected Successfully")
         else:
             logger.info('connection fail')
             QToolTip.showText(QtCore.QPoint(500, 200), "Connection Failed, please try again.")
-            self.label_6.setText("Connection Failed")
+            self.label_6.setText("❌ Connection Failed ")
 
 if __name__ == "__main__":
     import sys

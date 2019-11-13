@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 from PyQt5.QtWidgets import QCheckBox, QListWidgetItem, QTableWidgetItem, QDialog, QPushButton, QMessageBox
 from qepdiff2text.view.connection import ConnectHelper
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
 
@@ -98,6 +99,7 @@ class Ui_MainWindow(object):
         self.listWidget = QtWidgets.QListWidget(self.queryhistoryWidget)
         self.listWidget.setResizeMode(QtWidgets.QListView.Fixed)
         self.listWidget.setObjectName("listWidget")
+
         self.gridLayout.addWidget(self.listWidget, 0, 0, 1, 1)
         self.loadBtn = QtWidgets.QPushButton(self.queryhistoryWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -162,6 +164,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addWidget(self.query2_box)
         self.horizontalLayout_3.addLayout(self.verticalLayout_5)
         self.widget1 = QtWidgets.QWidget(self.splitter_3)
+
+
         self.widget1.setObjectName("widget1")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.widget1)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -169,37 +173,27 @@ class Ui_MainWindow(object):
         self.label = QtWidgets.QLabel(self.widget1)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        self.verticalLayout_7 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.verticalLayout.addLayout(self.verticalLayout_7)
-        self.scrollArea = QtWidgets.QScrollArea(self.widget1)
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setObjectName("scrollArea")
-        self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 873, 77))
-        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.tableWidget = QtWidgets.QTableWidget(self.scrollAreaWidgetContents)
-        self.tableWidget.setGeometry(QtCore.QRect(0, 0, 941, 105))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
-        self.tableWidget.setSizePolicy(sizePolicy)
-        self.tableWidget.setMinimumSize(QtCore.QSize(0, 105))
-        self.tableWidget.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(4)
+
+        self.tableWidget = QtWidgets.QTableWidget(self.widget1)
         self.tableWidget.setRowCount(0)
+        self.tableWidget.setObjectName("tableWidget")
+        self.tableWidget.setColumnCount(3)
+        header = self.tableWidget.horizontalHeader()
+        #
+        header.setSectionResizeMode(0, 1)
+        header.setSectionResizeMode(1, 1)
+        header.setSectionResizeMode(2, 1)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(1, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(3, item)
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.verticalLayout.addWidget(self.scrollArea)
+        self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
+        self.verticalLayout.addWidget(self.tableWidget)
+        self.verticalLayout_6.addWidget(self.splitter_3)
+
+
         self.verticalLayout_6.addWidget(self.splitter_3)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -235,14 +229,14 @@ class Ui_MainWindow(object):
         self.query2_label.setText(_translate("MainWindow", "Query2"))
         self.label.setText(_translate("MainWindow", "Difference"))
         item = self.tableWidget.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "steps"))
-        item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("MainWindow", "query1"))
-        item = self.tableWidget.horizontalHeaderItem(2)
+        item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("MainWindow", "query2"))
-        item = self.tableWidget.horizontalHeaderItem(3)
+        item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "difference"))
 
+    def do_sth(self, item):
+        print(item.text())
 
     def insert(self, data_list):
         """
@@ -252,7 +246,6 @@ class Ui_MainWindow(object):
         self.query_nb += 1
         box = QCheckBox('query_' +  str(self.query_nb))  # 实例化一个QCheckBox，吧文字传进去
         item = QListWidgetItem()
-
         # query_doc = QListWidgetItem()# 实例化一个Item，QListWidget，不能直接加入QCheckBox
         self.listWidget.addItem(item)  # 把QListWidgetItem加入QListWidget
         # self.listWidget.addItem(query_doc)
@@ -263,8 +256,8 @@ class Ui_MainWindow(object):
         doc = self.inputBox.document().toPlainText()
         self.query_list.append(doc)
         self.insert(self.query_list)
-        self.inputBox.clear()
-        print(doc)
+        # self.inputBox.clear()
+        # print(doc)
 
     def clear_list(self):
         self.listWidget.clear()
@@ -297,10 +290,10 @@ class Ui_MainWindow(object):
         self.query2_box.setText(chooses[1])
         self.set_table(self.get_diff())
 
-        if self.conn:
-            analyze1 = self.fetch(chooses[0])
-            analyze2 = self.fetch(chooses[1])
-            print(analyze1)
+        # if self.conn:
+        #     analyze1 = self.fetch(chooses[0])
+        #     analyze2 = self.fetch(chooses[1])
+        #     print(analyze1)
         return chooses
     
     def fetch(self, query, args=None):
@@ -311,24 +304,37 @@ class Ui_MainWindow(object):
             return analyze_fetched
 
     def get_diff(self):
-        diff_lst = [["node1","node2","diff1"],["","node2_2","diff2"],["node1_3","node2_3","diff3"]]
-        print(diff_lst)
+        diff_lst = [["node1", "node2", "edited"], ["", "node2_2", "insert"], ["node1_3", "node2_3", "delete"]]
+        # print(diff_lst)
         return diff_lst
 
     def set_table(self, lst):
         rows = len(lst)
         self.tableWidget.setRowCount(rows)
         for i in range(rows):
-            self.tableWidget.setItem(i, 0, QTableWidgetItem(i+1))
-            self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i][0]))
-            self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i][1]))
-            self.tableWidget.setItem(i, 3, QTableWidgetItem(lst[i][2]))
+            self.tableWidget.setItem(i, 0, QTableWidgetItem(lst[i][0]))
+            self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i][1]))
+            self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i][2]))
+            if lst[i][2] == 'insert':
+                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(255, 0, 0, 127))
+                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(255, 0, 0, 127))
+                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(255, 0, 0, 127))
 
-    def btnstate(self):
-        if self.addBtn.isChecked():
-            print("button pressed")
-        else:
-            print("button released")
+            if lst[i][2] == 'delete':
+                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(0, 0, 255, 127))
+                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 0, 255, 127))
+                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 0, 255, 127))
+
+            if lst[i][2] == 'edited':
+                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(0, 255, 0, 127))
+                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 255, 0, 127))
+                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 255, 0, 127))
+
+    # def btnstate(self):
+    #     if self.addBtn.isChecked():
+    #         print("button pressed")
+    #     else:
+    #         print("button released")
     
     def onConnectionClick(self, s):
         logger = logging.getLogger('view.connect')
@@ -338,7 +344,6 @@ class Ui_MainWindow(object):
         dialog.exec_()
         self.conn = dialogHelper.conn
         self.cur = dialogHelper.cur
-
 
 
 if __name__ == "__main__":

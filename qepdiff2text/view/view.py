@@ -330,10 +330,10 @@ class Ui_MainWindow(object):
 
         if self.qep_fetcher is not None:
             logger.info('db connected')
-            QToolTip.showText(QtCore.QPoint(500, 200), "Connect Successfully")
+            QToolTip.showText(QtCore.QPoint(500, 200), "Connected Successfully!")
         else:
             logger.info('connection fail')
-            QToolTip.showText(QtCore.QPoint(500, 200), "Connect Failed")
+            QToolTip.showText(QtCore.QPoint(500, 200), "Connection Failed, please try again.")
 
 
 if __name__ == "__main__":

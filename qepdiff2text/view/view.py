@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QCheckBox, QListWidgetItem, QTableWidgetItem, QDialo
 from qepdiff2text.view.connection import ConnectHelper
 from qepdiff2text.get_des import get_des
 from qepdiff2text.Node import Node
+from qepdiff2text.Description import DeletionDescription, InsertionDescription, UpdateDescription, SameDescription
 
 
 class Ui_MainWindow(object):
@@ -38,6 +39,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_6 = QtWidgets.QLabel(self.Connction)
         self.label_6.setObjectName("label_6")
+        self.label_6.setStyleSheet('color: red')
         self.horizontalLayout_4.addWidget(self.label_6)
         self.connectBtn = QtWidgets.QPushButton(self.Connction)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -124,7 +126,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.inputLabel = QtWidgets.QLabel(self.InputSection)
         self.inputLabel.setObjectName("inputLabel")
-        self.horizontalLayout_2.addWidget(self.inputLabel, 0, QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.horizontalLayout_2.addWidget(self.inputLabel, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
 
         self.inputBox = QtWidgets.QTextEdit(self.InputSection)
         self.inputBox.setObjectName("inputBox")
@@ -133,7 +135,7 @@ class Ui_MainWindow(object):
         self.addBtn.setObjectName("addBtn")
         self.addBtn.clicked.connect(self.get_input)
 
-        self.horizontalLayout_2.addWidget(self.addBtn, 0, QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.horizontalLayout_2.addWidget(self.addBtn, 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
         self.verticalLayout_2.addWidget(self.inputBox)
@@ -167,7 +169,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addLayout(self.verticalLayout_5)
         self.widget1 = QtWidgets.QWidget(self.splitter_3)
 
-
         self.widget1.setObjectName("widget1")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.widget1)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -194,7 +195,6 @@ class Ui_MainWindow(object):
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         self.verticalLayout.addWidget(self.tableWidget)
         self.verticalLayout_6.addWidget(self.splitter_3)
-
 
         self.verticalLayout_6.addWidget(self.splitter_3)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -306,17 +306,18 @@ class Ui_MainWindow(object):
             self.tableWidget.setItem(i, 0, QTableWidgetItem(lst[i].get_before_des()))
             self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i].get_after_des()))
             self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i].get_diff_des()))
-            if lst[i][2] == 'insert':
+
+            if isinstance(lst[i], InsertionDescription):
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(255, 0, 0, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(255, 0, 0, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(255, 0, 0, 127))
 
-            if lst[i][2] == 'delete':
+            if isinstance(lst[i], DeletionDescription):
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(0, 0, 255, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 0, 255, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 0, 255, 127))
 
-            if lst[i][2] == 'edited':
+            if isinstance(lst[i], InsertionDescription):
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(0, 255, 0, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 255, 0, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 255, 0, 127))
@@ -333,11 +334,13 @@ class Ui_MainWindow(object):
         if self.qep_fetcher is not None:
             logger.info('db connected')
             QToolTip.showText(QtCore.QPoint(500, 200), "Connected Successfully!")
-            self.label_6.setText("✅ Connected Successfully")
+            self.label_6.setStyleSheet('color: green')
+            self.label_6.setText("Connected Successfully")
         else:
             logger.info('connection fail')
             QToolTip.showText(QtCore.QPoint(500, 200), "Connection Failed, please try again.")
-            self.label_6.setText("❌ Connection Failed ")
+            self.label_6.setStyleSheet('color: red')
+            self.label_6.setText("Connection Failed")
 
 
 if __name__ == "__main__":

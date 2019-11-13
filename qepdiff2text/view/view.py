@@ -317,12 +317,7 @@ class Ui_MainWindow(object):
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 255, 0, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 255, 0, 127))
 
-    def btnstate(self):
-        if self.addBtn.isChecked():
-            print("button pressed")
-        else:
-            print("button released")
-
+  
     def onConnectionClick(self, s):
         logger = logging.getLogger('view.connect')
         dialog = QDialog()

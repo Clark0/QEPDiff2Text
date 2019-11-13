@@ -99,11 +99,11 @@ def describe_update(node_before: Node, node_after: Node) -> UpdateDescription:
             diff = "This step in the first query performs " + node_before.algorithm.lower() + \
                    ", but the second one performs " + node_after.algorithm.lower() + "."
         else:
-            diff = "This step in both query perform " + node_before.operation.lower() + \
-                   ". However in the first query "+ node_before.algorithm.lower() + " is performed" + \
+            diff = "This step in both queries perform " + node_before.operation.lower() + \
+                   ". However, in the first query "+ node_before.algorithm.lower() + " is performed" + \
                    ', and in the second query ' + node_after.algorithm.lower() + " is performed" + "."
     else:
-        diff = "This step in both query perform " + node_before.algorithm.lower() + ", but "
+        diff = "This step in both queries perform " + node_before.algorithm.lower() + ", but "
         differences = [] # differences between node1 and node2
         node1_special = [] # something node1 has but node2 doesn't have
         node2_special = [] # something node2 has but node1 doesn't have

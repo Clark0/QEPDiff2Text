@@ -212,7 +212,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label_6.setText(_translate("MainWindow", "Connceted State"))
+        self.label_6.setText(_translate("MainWindow", "❌Not connected"))
         self.connectBtn.setText(_translate("MainWindow", "Connect"))
         self.connectBtn.clicked.connect(self.onConnectionClick)
         self.historyLabel.setText(_translate("MainWindow", "History"))
@@ -335,11 +335,11 @@ class Ui_MainWindow(object):
         if self.qep_fetcher is not None:
             logger.info('db connected')
             QToolTip.showText(QtCore.QPoint(500, 200), "Connected Successfully!")
-            self.label_6.setText("Connected Successfully")
+            self.label_6.setText("✅ Connected Successfully")
         else:
             logger.info('connection fail')
             QToolTip.showText(QtCore.QPoint(500, 200), "Connection Failed, please try again.")
-            self.label_6.setText("Connection Failed")
+            self.label_6.setText("❌ Connection Failed ")
 
 
 if __name__ == "__main__":

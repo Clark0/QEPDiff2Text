@@ -241,14 +241,13 @@ class Ui_MainWindow(object):
         # for i in data_list:
         i = data_list[-1]
         self.query_nb += 1
-        box = QCheckBox('query_' + str(self.query_nb))  # 实例化一个QCheckBox，吧文字传进去
+        box = QCheckBox('query_' + str(self.query_nb))
         item = QListWidgetItem()
 
-        # query_doc = QListWidgetItem()# 实例化一个Item，QListWidget，不能直接加入QCheckBox
-        self.listWidget.addItem(item)  # 把QListWidgetItem加入QListWidget
+        self.listWidget.addItem(item)
         # self.listWidget.addItem(query_doc)
         self.listWidget.setItemWidget(item, box)
-        self.listWidget.addItem(i)  # 再把QCheckBox加入QListWidgetItem
+        self.listWidget.addItem(i)
 
     def get_input(self, input_list):
         doc = self.inputBox.document().toPlainText()
@@ -260,6 +259,7 @@ class Ui_MainWindow(object):
         self.query_list = []
 
     def getChoose(self) -> [str]:
+
 
         count = self.listWidget.count()  # QListWidget的总个数
 
@@ -288,6 +288,11 @@ class Ui_MainWindow(object):
             else:
                 logger = logging.getLogger("view.qepdiff")
                 logger.error('fail to query qep')
+        else:
+            msg = QMessageBox()
+            msg.setText("Database is not connected.")
+            msg.exec_()
+            return
         return chooses
 
     def get_diff(self, analyze_bef, analyze_aft):
@@ -298,10 +303,10 @@ class Ui_MainWindow(object):
         rows = len(lst)
         self.tableWidget.setRowCount(rows)
         for i in range(rows):
-            self.tableWidget.setItem(i, 0, QTableWidgetItem(i+1))
-            self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i].get_before_des()))
-            self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i].get_after_des()))
-            self.tableWidget.setItem(i, 3, QTableWidgetItem(lst[i].get_diff_des()))
+            self.tableWidget.setItem(i, 0, QTableWidgetItem(lst[i].get_before_des()))
+            self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i].get_after_des()))
+            self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i].get_diff_des()))
+            print(lst)
             if lst[i][2] == 'insert':
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(255, 0, 0, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(255, 0, 0, 127))
@@ -317,7 +322,7 @@ class Ui_MainWindow(object):
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 255, 0, 127))
                 self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 255, 0, 127))
 
-  
+
     def onConnectionClick(self, s):
         logger = logging.getLogger('view.connect')
         dialog = QDialog()

@@ -306,21 +306,21 @@ class Ui_MainWindow(object):
             self.tableWidget.setItem(i, 0, QTableWidgetItem(lst[i].get_before_des()))
             self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i].get_after_des()))
             self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i].get_diff_des()))
-
-            if isinstance(lst[i], InsertionDescription):
-                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(255, 0, 0, 127))
-                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(255, 0, 0, 127))
-                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(255, 0, 0, 127))
+            if isinstance(lst[i], UpdateDescription):
+                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(255, 242, 204, 127))
+                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(255, 242, 204, 127))
+                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(255, 242, 204, 127))
 
             if isinstance(lst[i], DeletionDescription):
-                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(0, 0, 255, 127))
-                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 0, 255, 127))
-                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 0, 255, 127))
+                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(244, 204, 204, 127))
+                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(244, 204, 204, 127))
+                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(244, 204, 204, 127))
 
             if isinstance(lst[i], InsertionDescription):
-                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(0, 255, 0, 127))
-                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(0, 255, 0, 127))
-                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(0, 255, 0, 127))
+                self.tableWidget.item(i, 0).setBackground(QtGui.QColor(217, 234, 211, 127))
+                self.tableWidget.item(i, 1).setBackground(QtGui.QColor(217, 234, 211, 127))
+                self.tableWidget.item(i, 2).setBackground(QtGui.QColor(217, 234, 211, 127))
+
 
     def onConnectionClick(self, s):
         logger = logging.getLogger('view.connect')

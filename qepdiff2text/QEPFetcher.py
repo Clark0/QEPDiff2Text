@@ -1,10 +1,11 @@
 import psycopg2
 
+
 class QEPFetcher:
-    def __init__(self, host, dbname, user, password):
-        self.conn = psycopg2.connect(host=host, dbname=dbname, user=user, password=password)
+    def __init__(self, host, dbname, user, password, port=5432):
+        self.conn = psycopg2.connect(host=host, dbname=dbname, user=user, password=password, port=port)
         self.cur = self.conn.cursor()
-    
+
     def fetch_json(self, query):
         try:
             self.cur.execute('explain (format json) ' + query)

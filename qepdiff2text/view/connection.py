@@ -52,6 +52,7 @@ class ConnectHelper(object):
         self.username_line.setObjectName("username_line")
         self.gridLayout.addWidget(self.username_line, 3, 2, 1, 1)
         self.password_line = QtWidgets.QLineEdit(Dialog)
+        self.password_line.setEchoMode(QtWidgets.QLineEdit.Password)
         self.password_line.setObjectName("password_line")
         self.gridLayout.addWidget(self.password_line, 4, 2, 1, 1)
 

@@ -101,7 +101,8 @@ class Operations(_const):
     LOCK_ROWS = "LOCK_ROWS"
     LIMIT = "LIMIT"
     HASH = "HASH"
-
+    GATHER = "GATHER"
+    GATHER_MERGE = "GATHER_MERGE"
 
 ####################################
 # Operation: Algorithms mapping
@@ -144,5 +145,7 @@ OP_ALGS = {
     Operations.UNIQUE: [Algos.UNIQUE],
     Operations.LOCK_ROWS: [Algos.LOCK_ROWS],
     Operations.LIMIT: [Algos.LIMIT],
-    Operations.HASH: [Algos.HASH]
+    Operations.HASH: [Algos.HASH],
+    Operations.GATHER: [Algos.GATHER],
+    Operations.GATHER_MERGE: [Algos.GATHER_MERGE]
 }

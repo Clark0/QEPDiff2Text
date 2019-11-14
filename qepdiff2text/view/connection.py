@@ -35,6 +35,9 @@ class ConnectHelper(object):
         self.password = QtWidgets.QLabel(Dialog)
         self.password.setObjectName("password")
         self.gridLayout.addWidget(self.password, 4, 0, 1, 1)
+        self.port = QtWidgets.QLabel(Dialog)
+        self.port.setObjectName("port")
+        self.gridLayout.addWidget(self.port, 5, 0, 1, 1)
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
@@ -44,17 +47,24 @@ class ConnectHelper(object):
         self.buttonBox.accepted.connect(self.get_input)
 
         self.buttonBox.setObjectName("buttonBox")
-        self.gridLayout.addWidget(self.buttonBox, 5, 0, 1, 3)
+        self.gridLayout.addWidget(self.buttonBox, 6, 0, 1, 3)
+
         self.hostName_line = QtWidgets.QLineEdit(Dialog)
         self.hostName_line.setObjectName("hostName_line")
         self.gridLayout.addWidget(self.hostName_line, 2, 2, 1, 1)
+
         self.username_line = QtWidgets.QLineEdit(Dialog)
         self.username_line.setObjectName("username_line")
         self.gridLayout.addWidget(self.username_line, 3, 2, 1, 1)
+
         self.password_line = QtWidgets.QLineEdit(Dialog)
         self.password_line.setEchoMode(QtWidgets.QLineEdit.Password)
         self.password_line.setObjectName("password_line")
         self.gridLayout.addWidget(self.password_line, 4, 2, 1, 1)
+
+        self.port_line = QtWidgets.QLineEdit(Dialog)
+        self.port_line.setObjectName("port_line")
+        self.gridLayout.addWidget(self.port_line, 5, 2, 1, 1)
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
@@ -70,11 +80,13 @@ class ConnectHelper(object):
         self.hostName.setText(_translate("Dialog", "Host Name"))
         self.username.setText(_translate("Dialog", "Username"))
         self.password.setText(_translate("Dialog", "Password"))
+        self.port.setText(_translate("Dialog", "Port"))
 
         self.dbName_line.setText('TPC-H')
         self.hostName_line.setText('localhost')
         self.username_line.setText('postgres')
         self.password_line.setText('mysecretpassword')
+        self.port_line.setText('')
 
     def get_input(self):
         db_info = []
@@ -82,9 +94,10 @@ class ConnectHelper(object):
         host = self.hostName_line.text()
         user = self.username_line.text()
         password = self.password_line.text()
+        port = self.port_line.text()
 
         try:
-            self.qep_fetcher = QEPFetcher(host=host, dbname=database, user=user, password=password)
+            self.qep_fetcher = QEPFetcher(host=host, dbname=database, user=user, password=password, port= port)
         except psycopg2.Error as e:
             print(e)
 

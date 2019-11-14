@@ -310,6 +310,9 @@ class Ui_MainWindow(object):
             self.tableWidget.setItem(i, 0, QTableWidgetItem(lst[i].get_before_des()))
             self.tableWidget.setItem(i, 1, QTableWidgetItem(lst[i].get_after_des()))
             self.tableWidget.setItem(i, 2, QTableWidgetItem(lst[i].get_diff_des()))
+            self.tableWidget.item(i, 0).setFlags( QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled)
+            self.tableWidget.item(i, 1).setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            self.tableWidget.item(i, 2).setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
             if isinstance(lst[i], UpdateDescription):
                 self.tableWidget.item(i, 0).setBackground(QtGui.QColor(255, 242, 204, 127))
                 self.tableWidget.item(i, 1).setBackground(QtGui.QColor(255, 242, 204, 127))

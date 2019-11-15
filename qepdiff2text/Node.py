@@ -88,29 +88,30 @@ class Node(object):
             return self.text
 
         increment = True
-        # skip the child if merge it with current node
-        if self.algorithm in [Algos.UNIQUE, Algos.AGG] and len(self.children) == 1 \
-                and (self.children[0].operation == Operations.SCAN or self.children[0].algorithm == Algos.SORT):
-            children_skip = True
-        elif self.algorithm == Algos.BITMAP_HEAP_SCAN and self.children[0].algorithm == Algos.BITMAP_INDEX_SCAN:
-            children_skip = True
-        else:
-            children_skip = False
+        # # skip the child if merge it with current node
+        # if self.algorithm in [Algos.UNIQUE, Algos.AGG] and len(self.children) == 1 \
+        #         and (self.children[0].operation == Operations.SCAN or self.children[0].algorithm == Algos.SORT):
+        #     children_skip = True
+        # elif self.algorithm == Algos.BITMAP_HEAP_SCAN and self.children[0].algorithm == Algos.BITMAP_INDEX_SCAN:
+        #     children_skip = True
+        # else:
+        #     children_skip = False
 
         # recursive
         for child in self.children:
-            if self.algorithm == Algos.AGG and len(self.children) > 1 and self.algorithm == Algos.SORT:
-                child.to_text(True)
-            else:
-                child.to_text(children_skip)
+            # if self.algorithm == Algos.AGG and len(self.children) > 1 and self.algorithm == Algos.SORT:
+            #     child.to_text(True)
+            # else:
+            #     child.to_text(children_skip)
+            child.to_text()
 
-        if skip:
-            return
+        # if skip:
+        #     return
 
         text = ""
         if self.operation == Operations.JOIN:
             if self.algorithm == Algos.HASH_JOIN:
-                text = "perform " + self.algorithm + " on "
+                text = "perform " + self.algorithm.lower() + " on "
                 for i, child in enumerate(self.children):
                     if i < len(self.children) - 1:
                         text += "table " + child.get_output_name()
@@ -120,7 +121,7 @@ class Node(object):
                 text += " under condition " + parse_cond(NodeAttrs.HASH_COND, self.attributes[NodeAttrs.HASH_COND], Node.table_subquery_name_pair)
 
             elif self.algorithm == Algos.MERGE_JOIN:
-                text = "perform " + self.algorithm + " on "
+                text = "perform " + self.algorithm.lower() + " on "
                 sort_children = []
                 for i, child in enumerate(self.children):
                     if child.algorithm == Algos.SORT:
@@ -132,18 +133,18 @@ class Node(object):
                     else:
                         text += " and table " + child.get_output_name()
 
-                if sort_children:
-                    sort_step = "sort "
-                    for child in sort_children:
-                        if i < len(self.children) - 1:
-                            sort_step += ("table " + child.get_output_name())
-                        else:
-                            sort_step += (" and table " +
-                                          child.get_output_name())
-                    text = sort_step + " and " + text
+                # if sort_children:
+                #     sort_step = "sort "
+                #     for child in sort_children:
+                #         if i < len(self.children) - 1:
+                #             sort_step += ("table " + child.get_output_name())
+                #         else:
+                #             sort_step += (" and table " +
+                #                           child.get_output_name())
+                #     text = sort_step + " and " + text
 
             elif self.algorithm == Algos.NEST_LOOP:
-                text = "perform " + self.algorithm + " on "
+                text = "perform " + self.algorithm.lower() + " on "
                 for i, child in enumerate(self.children):
                     if i < len(self.children) - 1:
                         text += "table " + child.get_output_name()
@@ -157,21 +158,21 @@ class Node(object):
 
         elif self.algorithm == Algos.BITMAP_HEAP_SCAN:
             # combine bitmap heap scan and bitmap index scan
-            if self.children[0].algorithm == Algos.BITMAP_INDEX_SCAN and NodeAttrs.RELATION_NAME in self.attributes:
-                self.children[0].set_output_name(self.attributes[NodeAttrs.RELATION_NAME])
-                text = " with index condition " + parse_cond("Recheck Cond", self.attributes[NodeAttrs.RELATION_NAME], Node.table_subquery_name_pair)
+            # if self.children[0].algorithm == Algos.BITMAP_INDEX_SCAN and NodeAttrs.RELATION_NAME in self.attributes:
+            #     self.children[0].set_output_name(self.attributes[NodeAttrs.RELATION_NAME])
+            #     text = " with index condition " + parse_cond("Recheck Cond", self.attributes[NodeAttrs.RELATION_NAME], Node.table_subquery_name_pair)
 
             text = "perform bitmap heap scan on table " + self.children[0].get_output_name() + text
 
         elif self.operation == Operations.UNIQUE:
             # combine unique and sort
-            if self.children[0].operation == Operations.SORT:
-                self.children[0].set_output_name(self.children[0].children[0].get_output_name())
-                text = "sort " + self.children[0].get_output_name()
-                if NodeAttrs.SORT_KEY in self.children[0].attributes:
-                    text += " with attribute " + parse_cond("Sort Key", self.children[0].attributes[NodeAttrs.SORT_KEY], Node.table_subquery_name_pair) + " and "
-                else:
-                    text += " and "
+            # if self.children[0].operation == Operations.SORT:
+            #     self.children[0].set_output_name(self.children[0].children[0].get_output_name())
+            #     text = "sort " + self.children[0].get_output_name()
+            #     if NodeAttrs.SORT_KEY in self.children[0].attributes:
+            #         text += " with attribute " + parse_cond("Sort Key", self.children[0].attributes[NodeAttrs.SORT_KEY], Node.table_subquery_name_pair) + " and "
+            #     else:
+            #         text += " and "
 
             text += "perform unique on table " + self.children[0].get_output_name()
 
@@ -179,24 +180,24 @@ class Node(object):
             if self.algorithm == Algos.SEQ_SCAN:
                 text = "perform sequential scan on table "
             else:
-                text += "perform " + self.algorithm + " on table "
+                text += "perform " + self.algorithm.lower() + " on table "
 
             text += self.get_output_name()
             if NodeAttrs.INDEX_COND in self.attributes:
                 text += " under condition " + parse_cond(NodeAttrs.INDEX_COND, self.attributes[NodeAttrs.INDEX_COND], Node.table_subquery_name_pair)
 
         elif self.operation == Operations.AGG:
-            for child in self.children:
-                # combine aggregate and sort
-                if child.operation == Operations.SORT:
-                    child.set_output_name(child.children[0].get_output_name())
-                    text = "sort " + child.get_output_name() + " and "
-                # combine aggregate with scan
-                if child.operation == Operations.SCAN:
-                    if child.algorithm == Algos.SEQ_SCAN:
-                        text = "perform sequential scan on " + child.get_output_name() + " and "
-                    else:
-                        text = "perform " + child.algorithm + " on " + child.get_output_name() + " and "
+            # for child in self.children:
+            #     # combine aggregate and sort
+            #     if child.operation == Operations.SORT:
+            #         child.set_output_name(child.children[0].get_output_name())
+            #         text = "sort " + child.get_output_name() + " and "
+            #     combine aggregate with scan
+            #     if child.operation == Operations.SCAN:
+            #         if child.algorithm == Algos.SEQ_SCAN:
+            #             text = "perform sequential scan on " + child.get_output_name() + " and "
+            #         else:
+            #             text = "perform " + child.algorithm + " on " + child.get_output_name() + " and "
             text += "perform aggregate on table " + self.children[0].get_output_name()
             if len(self.children) == 2:
                 text += " and table " + self.children[1].get_output_name()
@@ -209,14 +210,14 @@ class Node(object):
             text = "limit the result from table " + self.children[0].get_output_name() + " to " + str(self.attributes[NodeAttrs.PLAN_ROWS]) + " record(s)"
 
         else:
-            text = "perform " + self.algorithm + " on"
+            text = "perform " + self.algorithm.lower() + " on"
             # binary operator
             if self.children:
                 for i, child in enumerate(self.children):
                     if i < len(self.children) - 1:
                         text += (" table " + child.get_output_name() + ",")
                     else:
-                        text += (" and table " + child.get_output_name())
+                        text += (" table " + child.get_output_name())
             # unary operator
             else:
                 text += " table " + self.children[0].get_output_name()

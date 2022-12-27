@@ -1,5 +1,5 @@
 apted==1.0.3
 psycopg2-binary==2.8.4
-setuptools==40.8.0
+setuptools==65.5.1
 PyQt5==5.13.2
 typing==3.7.4.1
